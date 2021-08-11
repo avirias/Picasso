@@ -7,5 +7,6 @@ data class PhotoResponse(
     val id: String,
     val title: String,
     val publishedAt: String,
-    val comment: String
+    val comment: String,
+    val picture: String
 )

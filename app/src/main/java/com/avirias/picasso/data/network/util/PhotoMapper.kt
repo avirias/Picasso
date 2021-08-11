@@ -14,7 +14,8 @@ class PhotoMapper @Inject constructor(
         id = entity.id,
         title = entity.title,
         publishedAt = dateConvertor.convertStringToDate(entity.publishedAt),
-        comment = entity.comment
+        comment = entity.comment,
+        picture = entity.picture
     )
 
     // This function will never used
