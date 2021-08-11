@@ -13,7 +13,7 @@ sealed class Resource<out T> {
         }
     }
 
-    suspend fun peek(call: suspend T.() -> Unit): Resource<T> {
+    inline fun peek(crossinline call: T.() -> Unit): Resource<T> {
         if (this is Success) call(this.data)
         return this
     }

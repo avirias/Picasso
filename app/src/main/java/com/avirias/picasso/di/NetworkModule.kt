@@ -4,7 +4,9 @@ import com.avirias.picasso.BuildConfig
 import com.avirias.picasso.data.network.abstraction.PhotoWebService
 import com.avirias.picasso.data.network.implementation.PhotoWebServiceImpl
 import com.avirias.picasso.data.network.service.PhotoService
+import com.avirias.picasso.data.network.util.PhotoMapper
 import com.avirias.picasso.domain.constants.Network
+import com.avirias.picasso.domain.util.DateConvertor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,6 +15,8 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Singleton
 
 @Module
@@ -49,4 +53,22 @@ class NetworkModule {
     fun providesPhotoWebService(
         photoService: PhotoService
     ): PhotoWebService = PhotoWebServiceImpl(photoService)
+
+    @Provides
+    @Singleton
+    fun providesDateFormatter(): SimpleDateFormat {
+        return SimpleDateFormat("", Locale.ROOT)
+    }
+
+    @Provides
+    @Singleton
+    fun providesDateConvertor(
+        simpleDateFormat: SimpleDateFormat
+    ) = DateConvertor(simpleDateFormat)
+
+    @Provides
+    @Singleton
+    fun providesPhotoMapper(
+        dateConvertor: DateConvertor
+    ) = PhotoMapper(dateConvertor)
 }
