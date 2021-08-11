@@ -29,6 +29,7 @@ class PhotoDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Timber.d("received args is %s", args.photo)
+        binding.item = args.photo
     }
 
     override fun onDestroyView() {

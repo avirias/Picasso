@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Picasso</string>
     <string name="image_demo">Image Demo</string>
+    <string name="add_new_image">Add new Image</string>
 </resources>
