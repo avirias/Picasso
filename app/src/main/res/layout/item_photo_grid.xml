@@ -43,6 +43,7 @@
             app:autoSizeMinTextSize="12sp"
             app:autoSizeTextType="uniform"
             android:text="@{item.title}"
+            android:lines="1"
             app:layout_constraintBottom_toBottomOf="@id/image"
             app:layout_constraintLeft_toLeftOf="@id/image"
             app:layout_constraintRight_toRightOf="@id/image"

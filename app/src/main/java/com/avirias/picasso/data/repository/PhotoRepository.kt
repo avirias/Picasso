@@ -19,7 +19,9 @@ class PhotoRepository @Inject constructor(
             Timber.d("network response is %s", this.toString())
         }.map {
             map { photoResponse ->
-                photoMapper.mapFromEntity(photoResponse)
+                photoMapper.mapFromEntity(photoResponse).also {
+                    Timber.d("time is %s", it.toString())
+                }
             }
         }
     }

@@ -57,7 +57,7 @@ class NetworkModule {
     @Provides
     @Singleton
     fun providesDateFormatter(): SimpleDateFormat {
-        return SimpleDateFormat("", Locale.ROOT)
+        return SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z", Locale.ROOT)
     }
 
     @Provides

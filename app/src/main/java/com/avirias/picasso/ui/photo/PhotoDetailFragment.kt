@@ -10,6 +10,8 @@ import com.avirias.picasso.databinding.FragmentPhotoDetailBinding
 import com.avirias.picasso.util.extensions.hideLoader
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.*
 
 @AndroidEntryPoint
 class PhotoDetailFragment : Fragment() {
@@ -32,6 +34,9 @@ class PhotoDetailFragment : Fragment() {
         requireActivity().hideLoader()
         Timber.d("received args is %s", args.photo)
         binding.item = args.photo
+        val simpleDateFormat = SimpleDateFormat("EEE, MMM d, ''yy", Locale.getDefault())
+        val format = simpleDateFormat.format(args.photo.publishedAt)
+        binding.time.text = format
     }
 
     override fun onDestroyView() {

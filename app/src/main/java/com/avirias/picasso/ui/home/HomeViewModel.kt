@@ -21,6 +21,9 @@ class HomeViewModel @Inject constructor(
     private val _photos = MutableSharedFlow<Resource<List<Photo>>>(1)
     val photos = _photos.asSharedFlow()
 
+    val capturedImages = mutableListOf<Photo>()
+
+
     fun getPhotos() {
 
         val handler = CoroutineExceptionHandler { _, throwable ->

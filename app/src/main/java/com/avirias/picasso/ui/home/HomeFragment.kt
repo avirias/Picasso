@@ -32,7 +32,6 @@ import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 import java.io.File
 import java.util.*
-import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -69,8 +68,9 @@ class HomeFragment : Fragment() {
                     }
                     is Loading -> requireActivity().showLoader()
                     is Success -> {
+                        Timber.d("data received")
                         requireActivity().hideLoader()
-                        photoAdapter.submitList(it.data)
+                        photoAdapter.submitList(it.data + viewModel.capturedImages)
                     }
                 }
             }.catch { e ->
@@ -118,20 +118,18 @@ class HomeFragment : Fragment() {
     }
 
     private val takePicture = registerForActivityResult(TakePicture()) {
-        Timber.d("current uri is $currentImageUri")
         if (it) {
             currentImageUri?.let { uri ->
-                val currentList = ArrayList(photoAdapter.currentList)
-                currentList.add(
+                val date = Date()
+                viewModel.capturedImages.add(
                     Photo(
                         id = UUID.randomUUID().toString(),
                         title = "From Camera",
-                        publishedAt = Date(),
-                        comment = "",
+                        publishedAt = date,
+                        comment = "Captured from camera at ${date.hours}:${date.minutes} \r\n",
                         picture = uri
                     )
                 )
-                photoAdapter.submitList(currentList)
             }
         } else toast("Error while saving image")
     }

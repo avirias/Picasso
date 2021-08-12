@@ -29,6 +29,49 @@
             app:load="@{item}"
             tools:src="@tools:sample/avatars" />
 
+        <androidx.constraintlayout.helper.widget.Flow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#B3382C3A"
+            android:orientation="vertical"
+            android:paddingStart="10dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="10dp"
+            app:constraint_referenced_ids="title,time,comment"
+            app:flow_verticalGap="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:text="@{item.title}"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:autoSizeMaxTextSize="20sp"
+            app:autoSizeMinTextSize="16sp"
+            app:autoSizeTextType="uniform"
+            tools:text="Hello World" />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            tools:text="Wed, Jul 4, '01" />
+
+        <TextView
+            android:id="@+id/comment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{item.comment}"
+            android:textColor="@color/white"
+            app:paddingBottomSystemWindowInsets="@{true}"
+            tools:text="Ut voluptate consequat magna laborum aliquip consequat deserunt culpa veniam officia reprehenderit laboris. Labore exercitation mollit aliqua deserunt sint. Aliquip duis eu consequat aliqua commodo eu. Ullamco exercitation commodo elit dolor qui proident anim aliqua cillum deserunt est excepteur proident. In elit veniam cupidatat laboris qui non consectetur labore est ea. Proident minim fugiat labore irure.\r\n" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
