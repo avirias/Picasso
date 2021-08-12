@@ -29,7 +29,9 @@
             app:load="@{item}"
             tools:src="@tools:sample/avatars" />
 
+
         <androidx.constraintlayout.helper.widget.Flow
+            android:id="@+id/flow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#B3382C3A"
@@ -42,6 +44,20 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
+
+
+        <androidx.constraintlayout.utils.widget.ImageFilterView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:id="@+id/shareButton"
+            android:background="@drawable/background_circle"
+            android:padding="14dp"
+            android:src="@drawable/ic_round_share_24"
+            android:tint="@color/white"
+            app:layout_constraintBottom_toTopOf="@id/flow"
+            app:layout_constraintRight_toRightOf="@id/flow"
+            app:layout_constraintTop_toTopOf="@id/flow" />
 
         <TextView
             android:id="@+id/title"

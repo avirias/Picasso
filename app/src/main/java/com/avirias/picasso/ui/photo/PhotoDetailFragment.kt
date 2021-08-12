@@ -12,6 +12,16 @@ import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
+
+import androidx.core.content.FileProvider
+import com.avirias.picasso.BuildConfig
+import java.io.File
+import java.io.FileOutputStream
+
 
 @AndroidEntryPoint
 class PhotoDetailFragment : Fragment() {
@@ -37,6 +47,39 @@ class PhotoDetailFragment : Fragment() {
         val simpleDateFormat = SimpleDateFormat("EEE, MMM d, ''yy", Locale.getDefault())
         val format = simpleDateFormat.format(args.photo.publishedAt)
         binding.time.text = format
+        setOnShareListener()
+    }
+
+    private fun setOnShareListener() {
+        binding.shareButton.setOnClickListener {
+            try {
+                val uri = if (args.photo.picture.startsWith("content:")) {
+                    Uri.parse(args.photo.picture)
+                } else {
+                    val bitmap = ((binding.flicker.drawable) as BitmapDrawable).bitmap
+                    val file =
+                        File(requireContext().filesDir, "${args.photo.title}_${Date().time}.png")
+                    val fileOutputStream = FileOutputStream(file)
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)
+                    fileOutputStream.close()
+                    FileProvider.getUriForFile(
+                        requireContext(),
+                        BuildConfig.APPLICATION_ID + ".provider",
+                        file
+                    )
+                }
+
+                val intent = Intent(Intent.ACTION_SEND).apply {
+                    type = "image/*"
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    setDataAndType(uri, requireActivity().contentResolver.getType(uri))
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                }
+                startActivity(Intent.createChooser(intent, "Share with..."))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     override fun onDestroyView() {
