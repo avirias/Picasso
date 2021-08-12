@@ -18,7 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.avirias.picasso.BuildConfig
-import com.avirias.picasso.common.showErrorDialog
+import com.avirias.picasso.ui.common.showErrorDialog
 import com.avirias.picasso.databinding.FragmentHomeBinding
 import com.avirias.picasso.domain.Resource.*
 import com.avirias.picasso.domain.model.Photo

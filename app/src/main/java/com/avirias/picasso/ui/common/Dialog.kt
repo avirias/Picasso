@@ -1,4 +1,4 @@
-package com.avirias.picasso.common
+package com.avirias.picasso.ui.common
 
 import android.content.DialogInterface
 import androidx.appcompat.app.AlertDialog
