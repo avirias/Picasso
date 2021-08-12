@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.activity.result.contract.ActivityResultContracts.TakePicture
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -42,6 +43,7 @@ class HomeFragment : Fragment() {
     private val viewModel by viewModels<HomeViewModel>()
     private val photoAdapter by lazy { PhotoAdapter(this::onPhotoClick) }
     private var currentImageUri: String? = null
+    private var dialog: AlertDialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,7 +66,7 @@ class HomeFragment : Fragment() {
                     is Failure -> {
                         requireActivity().hideLoader()
                         Timber.e(it.throwable)
-                        showErrorDialog()
+                        dialog = showErrorDialog()
                     }
                     is Loading -> requireActivity().showLoader()
                     is Success -> {
@@ -75,7 +77,7 @@ class HomeFragment : Fragment() {
                 }
             }.catch { e ->
                 Timber.e(e)
-                showErrorDialog()
+                dialog = showErrorDialog()
             }.launchIn(lifecycleScope)
 
 
@@ -87,7 +89,7 @@ class HomeFragment : Fragment() {
         binding.fab.setOnClickListener {
             val camera = Manifest.permission.CAMERA
             if (shouldShowRequestPermissionRationale(camera))
-                showErrorDialog("Please enable camera permission in settings") {
+                dialog = showErrorDialog("Please enable camera permission in settings") {
                     val uri = Uri.fromParts("package", requireContext().packageName, null)
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                         data = uri
@@ -136,6 +138,7 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        dialog?.dismiss()
         _binding = null
     }
 }
