@@ -18,7 +18,7 @@ class HomeViewModel @Inject constructor(
     private val photoRepository: PhotoRepository
 ) : ViewModel() {
 
-    private val _photos = MutableSharedFlow<Resource<List<Photo>>>(0)
+    private val _photos = MutableSharedFlow<Resource<List<Photo>>>(1)
     val photos = _photos.asSharedFlow()
 
     fun getPhotos() {
@@ -32,5 +32,9 @@ class HomeViewModel @Inject constructor(
             val response = photoRepository.getPhotos()
             _photos.emit(response)
         }
+    }
+
+    init {
+        getPhotos()
     }
 }

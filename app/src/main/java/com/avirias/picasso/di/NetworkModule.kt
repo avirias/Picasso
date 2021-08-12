@@ -46,7 +46,7 @@ class NetworkModule {
     @Singleton
     fun providesPhotoService(
         retrofit: Retrofit
-    ) = retrofit.create(PhotoService::class.java)
+    ): PhotoService = retrofit.create(PhotoService::class.java)
 
     @Provides
     @Singleton

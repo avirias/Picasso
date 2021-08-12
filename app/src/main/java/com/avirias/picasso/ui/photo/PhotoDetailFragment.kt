@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.avirias.picasso.databinding.FragmentPhotoDetailBinding
+import com.avirias.picasso.util.extensions.hideLoader
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -28,6 +29,7 @@ class PhotoDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().hideLoader()
         Timber.d("received args is %s", args.photo)
         binding.item = args.photo
     }

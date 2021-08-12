@@ -1,22 +1,38 @@
 package com.avirias.picasso.ui.home
 
+import android.Manifest
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
+import androidx.activity.result.contract.ActivityResultContracts.TakePicture
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.avirias.picasso.BuildConfig
+import com.avirias.picasso.common.showErrorDialog
 import com.avirias.picasso.databinding.FragmentHomeBinding
 import com.avirias.picasso.domain.Resource.*
 import com.avirias.picasso.domain.model.Photo
+import com.avirias.picasso.util.extensions.hideLoader
+import com.avirias.picasso.util.extensions.showLoader
+import com.avirias.picasso.util.extensions.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import timber.log.Timber
+import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -26,6 +42,7 @@ class HomeFragment : Fragment() {
 
     private val viewModel by viewModels<HomeViewModel>()
     private val photoAdapter by lazy { PhotoAdapter(this::onPhotoClick) }
+    private var currentImageUri: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,21 +56,26 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getPhotos()
+//        viewModel.getPhotos()
 
         viewModel.photos
             .flowWithLifecycle(lifecycle)
             .onEach {
                 when (it) {
                     is Failure -> {
+                        requireActivity().hideLoader()
+                        Timber.e(it.throwable)
+                        showErrorDialog()
                     }
-                    is Loading -> {
-
+                    is Loading -> requireActivity().showLoader()
+                    is Success -> {
+                        requireActivity().hideLoader()
+                        photoAdapter.submitList(it.data)
                     }
-                    is Success -> photoAdapter.submitList(it.data)
                 }
-            }.catch {
-
+            }.catch { e ->
+                Timber.e(e)
+                showErrorDialog()
             }.launchIn(lifecycleScope)
 
 
@@ -61,11 +83,57 @@ class HomeFragment : Fragment() {
             adapter = photoAdapter
             layoutManager = GridLayoutManager(this@HomeFragment.context, 2)
         }
+
+        binding.fab.setOnClickListener {
+            val camera = Manifest.permission.CAMERA
+            if (shouldShowRequestPermissionRationale(camera))
+                showErrorDialog("Please enable camera permission in settings") {
+                    val uri = Uri.fromParts("package", requireContext().packageName, null)
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = uri
+                    }
+                    startActivity(intent)
+                }
+            else cameraPermission.launch(camera)
+        }
     }
 
     private fun onPhotoClick(photo: Photo) {
         val direction = HomeFragmentDirections.actionHomeFragmentToPhotoDetailFragment(photo)
         findNavController().navigate(direction)
+    }
+
+    private val cameraPermission = registerForActivityResult(RequestPermission()) {
+        if (it) {
+            val file = File(requireContext().filesDir, "image_${Date().time}.jpg")
+            val uriForFile = FileProvider.getUriForFile(
+                requireContext(),
+                BuildConfig.APPLICATION_ID + ".provider",
+                file
+            ).apply {
+                currentImageUri = this.toString()
+            }
+            takePicture.launch(uriForFile)
+        } else showErrorDialog("Camera permission required to capture an image")
+    }
+
+    private val takePicture = registerForActivityResult(TakePicture()) {
+        Timber.d("current uri is $currentImageUri")
+        if (it) {
+            currentImageUri?.let { uri ->
+                val currentList = ArrayList(photoAdapter.currentList)
+                currentList.add(
+                    Photo(
+                        id = UUID.randomUUID().toString(),
+                        title = "From Camera",
+                        publishedAt = Date(),
+                        comment = "",
+                        picture = uri
+                    )
+                )
+                photoAdapter.submitList(currentList)
+            }
+        } else toast("Error while saving image")
     }
 
     override fun onDestroyView() {
